@@ -9,27 +9,23 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/api/accounts")
 public class AccountController {
 
     @Autowired
     private AccountService accountService;
 
+    //create account
 
-    //Add Account
-    @PostMapping
-    public Account addAccount(@RequestBody Account account){
-        Account account1 = accountService.addAccount(account);
-        return account1;
+    @PostMapping("/create")
+    public Account createAccount(@RequestBody Account account){
+        return accountService.createAccount(account);
     }
 
-    //Get account by account number
-
+    //get by accountid
     @GetMapping("/{accountNumber}")
     public Optional<Account> getAccountByAccountNumber(@PathVariable Long accountNumber){
-        Optional<Account> accountDetails = accountService.getAccountByAccountNumber(accountNumber);
-       return accountDetails;
-
+        return accountService.getAccountByAccountNumber(accountNumber);
     }
 
     //get all accounts
@@ -39,28 +35,23 @@ public class AccountController {
         return accountService.getAllAccounts();
     }
 
-    //Deposit amount
+    //deposit
 
     @PutMapping("/deposit/{accountNumber}/{amount}")
     public Account deposit(@PathVariable Long accountNumber, @PathVariable double amount){
-        return accountService.deposit(accountNumber, amount);
+        return accountService.deposit(accountNumber,amount);
     }
 
-    //witdraw amount
+    //withdraw
+
     @PutMapping("/withdraw/{accountNumber}/{amount}")
+
     public Account withdraw(@PathVariable Long accountNumber, @PathVariable double amount){
         return accountService.withdraw(accountNumber, amount);
     }
 
-    //deelete account
-
-    @DeleteMapping("/{accountNumber}")
-    public String delete(@PathVariable Long accountNumber){
-        accountService.delete(accountNumber);
-
-        return "Account deleted successfully!!!";
+    @DeleteMapping("/delete/{accountNumber}")
+    public Optional<Account> delete(@PathVariable Long accountNumber){
+        return accountService.delete(accountNumber);
     }
-
-
-
 }

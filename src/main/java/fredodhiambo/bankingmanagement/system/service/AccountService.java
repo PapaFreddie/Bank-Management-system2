@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AccountService {
-    Account addAccount(Account account);
+    Account createAccount(Account account);
 
     Optional<Account> getAccountByAccountNumber(Long accountNumber);
 
     List<Account> getAllAccounts();
 
-    Account deposit(Long accountNumber, double amount);
-
     Account withdraw(Long accountNumber, double amount);
 
-    void delete(Long accountNumber);
+    Account deposit(Long accountNumber, double amount);
+
+    Optional<Account> delete(Long accountNumber);
 }

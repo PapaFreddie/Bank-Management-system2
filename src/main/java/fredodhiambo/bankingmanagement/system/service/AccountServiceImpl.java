@@ -14,19 +14,14 @@ public class AccountServiceImpl implements AccountService{
     @Autowired
     private AccountRepository accountRepository;
     @Override
-    public Account addAccount(Account account) {
-        Account account1 = accountRepository.save(account);
-
-        return account1;
+    public Account createAccount(Account account) {
+        return accountRepository.save(account);
     }
 
     @Override
     public Optional<Account> getAccountByAccountNumber(Long accountNumber) {
-        Optional<Account> accountDetail = Optional.ofNullable(accountRepository
-                .findById(accountNumber)
-                .orElseThrow(() -> new RuntimeException("Ooops!! Account Not Available!!")));
 
-        return accountDetail;
+        return accountRepository.findById(accountNumber);
     }
 
     @Override
@@ -36,35 +31,37 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
+    public Account withdraw(Long accountNumber, double amount) {
+
+        Account account = accountRepository
+                .findById(accountNumber)
+                .orElseThrow(() -> new RuntimeException("Account unavailable!!"));
+
+        if(account.getBalance() < amount){
+            throw new RuntimeException("Insufficient funds to make this transaction!!");
+        }
+        double total = account.getBalance() - amount;
+        account.setBalance(total);
+        return account;
+    }
+
+    @Override
     public Account deposit(Long accountNumber, double amount) {
         Account account = accountRepository
                 .findById(accountNumber)
-                .orElseThrow(() -> new RuntimeException("Account do not exist"));
+                .orElseThrow(() -> new RuntimeException("Account unavailable!!"));
+
         double total = account.getBalance() + amount;
         account.setBalance(total);
 
-        return accountRepository.save(account);
+        return account;
     }
 
     @Override
-    public Account withdraw(Long accountNumber, double amount) {
+    public Optional<Account> delete(Long accountNumber) {
         Account account = accountRepository
                 .findById(accountNumber)
-                .orElseThrow(() -> new RuntimeException("Account do not exist"));
-
-        double total = account.getBalance() - amount;
-        account.setBalance(total);
-
-        return accountRepository.save(account);
+                .orElseThrow(() -> new RuntimeException("Account unavailable!!"));
+        return accountRepository.findById(accountNumber);
     }
-
-    @Override
-    public void delete(Long accountNumber) {
-        Account account = accountRepository
-                .findById(accountNumber)
-                .orElseThrow(() -> new RuntimeException("Account do not exist"));
-        accountRepository.deleteById(accountNumber);
-    }
-
-
 }
